@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -106,7 +107,7 @@ public class Clock extends View {
         drawNeedles(canvas);
 
         // todo 每一秒刷新一次，让指针动起来
-
+        postInvalidateDelayed(1000);
     }
 
     private void drawDegrees(Canvas canvas) {
@@ -147,7 +148,14 @@ public class Clock extends View {
     private void drawHoursValues(Canvas canvas) {
         // Default Color:
         // - hoursValuesColor
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(60);
 
+        Date now = new Date();
+        now.setTime(now.getTime() + 28800000L);     //将时区调整为北京时间
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        canvas.drawText(dateFormat.format(now), 500, 300, paint);
 
     }
 
@@ -167,6 +175,7 @@ public class Clock extends View {
         drawPointer(canvas, 2, nowSeconds);
         // 画分针
         // todo 画分针
+        drawPointer(canvas, 1, nowMinutes);
         // 画时针
         int part = nowMinutes / 12;
         drawPointer(canvas, 0, 5 * nowHours + part);
@@ -189,7 +198,9 @@ public class Clock extends View {
                 break;
             case 1:
                 // todo 画分针，设置分针的颜色
-
+                degree = value * UNIT_DEGREE;
+                mNeedlePaint.setColor(Color.BLUE);
+                pointerHeadXY = getPointerHeadXY(MINUTE_POINTER_LENGTH, degree);
                 break;
             case 2:
                 degree = value * UNIT_DEGREE;
